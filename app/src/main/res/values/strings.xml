@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">CryptoFolio</string>
+    <string name="mcap"><b>Market Cap: </b></string>
+    <string name="circ_supply"><b>Circulating Supply: </b></string>
+    <string name="rank"><b>Currency Rank:</b> </string>
+    <string name="addToPort">Add To \n Portfolio</string>
+    <string name="delFromPort">Delete from \n Portfolio</string>
+</resources>
