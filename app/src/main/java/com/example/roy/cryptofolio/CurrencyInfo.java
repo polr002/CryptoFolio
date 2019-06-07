@@ -50,8 +50,8 @@ public class CurrencyInfo extends AppCompatActivity{
     private TextView currencyPrice;
     private static final int DEFAULT_ZERO = 0;
 
-    public static final int DELETE_CRYPTO = 1;
-    public static final int ADD_CRYPTO = 0;
+    public static final int DELETE_CRYPTO = 2;
+    public static final int ADD_CRYPTO = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -59,8 +59,9 @@ public class MainActivity extends AppCompatActivity implements CurrencyAdapter.C
     public final static int TASK_DELETE_CRYPTO = 1;
     public final static int TASK_INSERT_CRYPTO = 2;
 
-    public static final int ADD_CRYPTO = 0;
-    public static final int DELETE_CRYPTO = 1;
+    public static final int BACK_BUTTON = 0;
+    public static final int ADD_CRYPTO = 1;
+    public static final int DELETE_CRYPTO = 2;
 
     public static final Double NO_LIMIT = 0.0;
     int position;
