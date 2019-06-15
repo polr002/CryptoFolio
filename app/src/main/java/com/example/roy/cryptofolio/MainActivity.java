@@ -233,12 +233,14 @@ public class MainActivity extends AppCompatActivity implements CurrencyAdapter.C
             String id = data.getStringExtra("id");
             String name = data.getStringExtra("name");
             Float marketcap = data.getFloatExtra("marketcap", 0);
-            new CryptoAsyncTask(TASK_INSERT_CRYPTO).execute(new PortfolioDbObject(id, name, marketcap));
+            String amount = data.getStringExtra("amount");
+            new CryptoAsyncTask(TASK_INSERT_CRYPTO).execute(new PortfolioDbObject(id, name, marketcap, amount));
         } else if (resultCode == DELETE_CRYPTO) {
             String id = data.getStringExtra("id");
             String name = data.getStringExtra("name");
             Float marketcap = data.getFloatExtra("marketcap", 0);
-            new CryptoAsyncTask(TASK_DELETE_CRYPTO).execute(new PortfolioDbObject(id, name, marketcap));
+            String amount = data.getStringExtra("amount");
+            new CryptoAsyncTask(TASK_DELETE_CRYPTO).execute(new PortfolioDbObject(id, name, marketcap, amount));
         }
     }
 
@@ -254,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyAdapter.C
         protected List doInBackground(PortfolioDbObject... currencies) {
             switch (taskCode) {
                 case TASK_DELETE_CRYPTO:
-                    db.cryptoDao().deleteCurrency(currencies[0]);
+                    db.cryptoDao().deleteCurrency(currencies[0].getId());
                     break;
 
                 case TASK_INSERT_CRYPTO:

@@ -19,21 +19,27 @@ public class PortfolioDbObject implements Parcelable {
     @ColumnInfo(name = "marketcap")
     private Float marketcap;
 
-    public PortfolioDbObject(String id, String name, Float marketcap) {
+    @ColumnInfo(name = "amount")
+    private String amount;
+
+    public PortfolioDbObject(String id, String name, Float marketcap, String amount) {
         this.id = id;
         this.name = name;
         this.marketcap = marketcap;
+        this.amount = amount;
     }
     protected PortfolioDbObject(Parcel in){
         id = in.readString();
         name = in.readString();
         marketcap = in.readFloat();
+        amount = in.readString();
     }
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
         dest.writeString(name);
         dest.writeFloat(marketcap);
+        dest.writeString(amount);
     }
     @Override
     public int describeContents() {
@@ -74,5 +80,12 @@ public class PortfolioDbObject implements Parcelable {
 
     public void setMarketcap(Float marketcap) {
         this.marketcap = marketcap;
+    }
+
+    public String getAmount() {
+        return amount;
+    }
+    public void setAmount(String amount) {
+        this.amount = amount;
     }
 }

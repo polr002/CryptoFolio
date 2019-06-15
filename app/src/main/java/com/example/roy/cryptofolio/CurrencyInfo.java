@@ -33,21 +33,23 @@ import static com.example.roy.cryptofolio.MainActivity.ADD_CRYPTO;
 import static com.example.roy.cryptofolio.MainActivity.DELETE_CRYPTO;
 import static com.example.roy.cryptofolio.MainActivity.db;
 
-public class CurrencyInfo extends AppCompatActivity{
+public class CurrencyInfo extends AppCompatActivity implements CurrencyDialog.CurrencyDialogListener{
     private TextView currencyDescription;
     private RequestQueue queue;
     private ImageView currencyImgView;
     private TextView currencyMcap;
     private TextView currencyRank;
     private TextView currencyCircSupply;
-    private TextView high24h;
-    private TextView currencyATH;
+    private TextView currencyHighLow;
+    private TextView currencyAth;
     private TextView currencyTotalVolume;
     private TextView currencyPriceChangeDollar;
     private Button addToPortfolioBtn;
     private Button delFromPortfolioBtn;
     private ProgressBar progressBar;
     private TextView currencyPrice;
+    private TextView currencyAmount;
+
     private static final int DEFAULT_ZERO = 0;
 
     public static final int DELETE_CRYPTO = 2;
@@ -65,10 +67,11 @@ public class CurrencyInfo extends AppCompatActivity{
         currencyRank = findViewById(R.id.currencyRank);
         currencyPrice = findViewById(R.id.currencyPrice);
         currencyCircSupply = findViewById(R.id.circSupply);
-        high24h = findViewById(R.id.high24h);
+        currencyHighLow = findViewById(R.id.high24h);
         currencyTotalVolume = findViewById(R.id.currencyTotalVolume);
         currencyPriceChangeDollar = findViewById(R.id.priceChangeDollar);
-        currencyATH = findViewById(R.id.currencyATH);
+        currencyAth = findViewById(R.id.currencyATH);
+        currencyAmount = findViewById(R.id.currencyAmount);
 
         addToPortfolioBtn = findViewById(R.id.addToPortfolioBtn);
         delFromPortfolioBtn = findViewById(R.id.delFromPortfolioBtn);
@@ -92,6 +95,7 @@ public class CurrencyInfo extends AppCompatActivity{
         double pctFromAth = getIntent().getDoubleExtra("athChangePct", DEFAULT_ZERO);
 
 
+
         //Some values require formatting
         DecimalFormat decim = new DecimalFormat("###,###.##", new DecimalFormatSymbols());
         String mCapValue = decim.format(marketCap);
@@ -104,42 +108,61 @@ public class CurrencyInfo extends AppCompatActivity{
 
         DecimalFormat max2Digits = new DecimalFormat("#.##");
         String pctFromAthValue = max2Digits.format(pctFromAth);
+        String priceChangePctValue = max2Digits.format(priceChangePct);
 
         //Set the textviews
-        currencyRank.setText("Rank: " + String.valueOf(marketCapRank));
+        String currencyRankValue = String.format(getResources().getString(R.string.currencyRankStr), marketCapRank);
+        currencyRank.setText(currencyRankValue);
+
         //Displays circ supply compared to the total supply
-        currencyCircSupply.setText(getString(R.string.circ_supply) + "\n" + String.valueOf(circSupplyValue) + "/" + String.valueOf(totalSupplyValue));
+        String currencySupplyValue = String.format(getResources().getString(R.string.currencySupplyStr), circSupplyValue, totalSupplyValue);
+        currencyCircSupply.setText(currencySupplyValue);
+
         //Price change in percentage and dollar
-        currencyPriceChangeDollar.setText("Price change: \n" + "$" + priceChange24hValue + " | " + String.valueOf(priceChangePct) + "%");
-        currencyPrice.setText("$" + String.valueOf(price));
-        currencyMcap.setText("MarketCap: \n" + "$" + String.valueOf(mCapValue));
+        String currencyPriceChangeValue = String.format(getResources().getString(R.string.currencyPriceChangeStr), priceChange24hValue, priceChangePctValue);
+        currencyPriceChangeDollar.setText(currencyPriceChangeValue);
+
+        String currencyPriceValue = String.format(getResources().getString(R.string.currencyPriceStr), String.valueOf(price));
+        currencyPrice.setText(currencyPriceValue);
+
+        String currencyMarketCapValue = String.format(getResources().getString(R.string.currencyMarketCapStr), mCapValue);
+        currencyMcap.setText(currencyMarketCapValue);
+
         //ath and percentage removed from ath
-        currencyATH.setText("ATH:  \n$" + String.valueOf(ath) + " | " + pctFromAthValue + "%");
+        String currencyAthValue = String.format(getResources().getString(R.string.currencyAthStr), String.valueOf(ath), pctFromAthValue);
+        currencyAth.setText(currencyAthValue);
+
         //24 High and 24 Low
-        high24h.setText("24h low / " + "24h high:" + "\n" + "$" + String.valueOf(low24) + " / $" + String.valueOf(high24));
-        currencyTotalVolume.setText("Total volume: \n" + totalVolumeValue);
+        String currencyHighLowValue = String.format(getResources().getString(R.string.currencyHighLowStr), String.valueOf(low24), String.valueOf(high24));
+        currencyHighLow.setText(currencyHighLowValue);
+
+        //Total volume
+        String currencyTotalVolumeValue = String.format(getResources().getString(R.string.currencyTotalVolumeStr), totalVolumeValue);
+        currencyTotalVolume.setText(currencyTotalVolumeValue);
 
 
         //request description and large image
         queue = Volley.newRequestQueue(this);
         jsonParse(id);
 
+        //Checks if the currency is in the portfolio database and sets the add and delete btn accordingly
         for (int i = 0; i < db.cryptoDao().getPortfolio().size(); i++) {
             if (db.cryptoDao().getPortfolio().get(i).getId().equals(id)) {
                 addToPortfolioBtn.setVisibility(View.GONE);
                 delFromPortfolioBtn.setVisibility(View.VISIBLE);
+
+                String amount = String.format(getResources().getString(R.string.currencyAmountStr), db.cryptoDao().getCurrencyAmount(id));
+
+                currencyAmount.setText(amount);
+
+                currencyAmount.setVisibility(View.VISIBLE);
             }
         }
-        //Button sends intent to add values to the database
+        //Button opens the amount dialog
         addToPortfolioBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra("name", getIntent().getStringExtra("name"));
-                intent.putExtra("id", getIntent().getStringExtra("id"));
-                intent.putExtra("marketcap", getIntent().getFloatExtra("marketCap", DEFAULT_ZERO));
-                setResult(ADD_CRYPTO, intent);
-                finish();
+                openDialog();
 
             }
         });
@@ -188,5 +211,19 @@ public class CurrencyInfo extends AppCompatActivity{
             }
         });
         queue.add(request);
+    }
+    public void openDialog() {
+        CurrencyDialog dialog = new CurrencyDialog();
+        dialog.show(getSupportFragmentManager(), "dialog");
+    }
+    @Override
+    public void addToPortfolio(String amount) {
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.putExtra("name", getIntent().getStringExtra("name"));
+        intent.putExtra("id", getIntent().getStringExtra("id"));
+        intent.putExtra("marketcap", getIntent().getFloatExtra("marketCap", DEFAULT_ZERO));
+        intent.putExtra("amount", amount);
+        setResult(ADD_CRYPTO, intent);
+        finish();
     }
 }

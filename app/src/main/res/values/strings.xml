@@ -1,8 +1,18 @@
 <resources>
     <string name="app_name">CryptoFolio</string>
     <string name="mcap"><b>Market Cap: </b></string>
-    <string name="circ_supply"><b>Circulating Supply: </b></string>
-    <string name="rank"><b>Currency Rank:</b> </string>
+    <string name="circ_supply">Circulating supply: </string>
+    <!-- Strings for currency info view-->
+    <string name="currencySupplyStr">Circulating Supply:  \n%1$s \nTotal Supply: \n%2$s </string>
+    <string name="currencyRankStr">Rank: %1$d </string>
+    <string name="currencyPriceChangeStr">Price Change: \n$ %1$s | %2$s %% </string>
+    <string name="currencyPriceStr">$ %1$s </string>
+    <string name="currencyMarketCapStr">Marketcap: \n$ %1$s </string>
+    <string name="currencyAthStr">ATH: \n$ %1$s | %2$s %% </string>
+    <string name="currencyHighLowStr">24h low / 24 high: \n$ %1$s / $ %2$s </string>
+    <string name="currencyTotalVolumeStr">Total volume: \n%1$s </string>
+    <string name="currencyAmountStr">Amount owned: \n%1$s</string>
+    <!-- Buttons for currency info view -->
     <string name="addToPort">Add To \n Portfolio</string>
     <string name="delFromPort">Delete from \n Portfolio</string>
 </resources>

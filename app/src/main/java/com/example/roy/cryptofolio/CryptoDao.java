@@ -17,8 +17,14 @@ public interface CryptoDao {
     @Insert
     public void insertCurrency (PortfolioDbObject cryptoCurrency);
 
-    @Delete
-    public void deleteCurrency (PortfolioDbObject cryptoCurrency);
+    //@Delete
+    //public void deleteCurrency (PortfolioDbObject cryptoCurrency);
+
+    @Query("DELETE FROM portfolio WHERE id == :id")
+    void deleteCurrency(String id);
+
+    @Query("SELECT amount FROM portfolio WHERE id == :id")
+    public String getCurrencyAmount(String id);
 
 
 }
