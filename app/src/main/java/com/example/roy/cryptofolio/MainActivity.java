@@ -11,6 +11,7 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -41,7 +42,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.Path;
 
-public class MainActivity extends AppCompatActivity implements CurrencyAdapter.CardClickListener {
+public class MainActivity extends AppCompatActivity implements CurrencyAdapter.CardClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     private CmcApiService service;
     private RecyclerView recyclerView;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyAdapter.C
     private EditText searchBar;
     private ProgressBar progressBar;
     private ArrayList<CryptoCurrency> portfolio;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public static final String CLICKED_CRYPTO = "crypto";
 
@@ -96,9 +98,11 @@ public class MainActivity extends AppCompatActivity implements CurrencyAdapter.C
         recyclerView = findViewById(R.id.recyclerView);
         searchBar = findViewById(R.id.searchBar);
         progressBar = findViewById(R.id.progressBar);
-
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
 
         cryptoCurrency = new ArrayList<>();
+
+        swipeRefreshLayout.setOnRefreshListener(this);
 
         RecyclerView.LayoutManager mLayoutManager = new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(mLayoutManager);
@@ -169,11 +173,9 @@ public class MainActivity extends AppCompatActivity implements CurrencyAdapter.C
 
                 cryptoCurrency.addAll(response.body());
 
-
                 Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show();
                 updateView();
                 progressBar.setVisibility(View.GONE);
-
 
             }
 
@@ -276,4 +278,15 @@ public class MainActivity extends AppCompatActivity implements CurrencyAdapter.C
             }
         }
     }
+
+    @Override
+    public void onRefresh() {
+            cryptoCurrency.clear();
+
+            requestCryptoCurrency(2, 250);
+            requestCryptoCurrency(1, 250);
+            swipeRefreshLayout.setRefreshing(false);
+
+    }
+
 }

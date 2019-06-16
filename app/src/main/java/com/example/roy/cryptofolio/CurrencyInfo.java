@@ -49,7 +49,7 @@ public class CurrencyInfo extends AppCompatActivity implements CurrencyDialog.Cu
     private ProgressBar progressBar;
     private TextView currencyPrice;
     private TextView currencyAmount;
-
+    private View divider;
     private static final int DEFAULT_ZERO = 0;
 
     public static final int DELETE_CRYPTO = 2;
@@ -60,7 +60,7 @@ public class CurrencyInfo extends AppCompatActivity implements CurrencyDialog.Cu
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_currency_info);
 
-
+        divider = findViewById(R.id.divider);
         currencyDescription = findViewById(R.id.currencyDescription);
         currencyImgView = findViewById(R.id.currencyImgView);
         currencyMcap = findViewById(R.id.currencyMcap);
@@ -146,6 +146,7 @@ public class CurrencyInfo extends AppCompatActivity implements CurrencyDialog.Cu
         jsonParse(id);
 
         //Checks if the currency is in the portfolio database and sets the add and delete btn accordingly
+        //If its in the db we can also request the amount and display it
         for (int i = 0; i < db.cryptoDao().getPortfolio().size(); i++) {
             if (db.cryptoDao().getPortfolio().get(i).getId().equals(id)) {
                 addToPortfolioBtn.setVisibility(View.GONE);
@@ -180,6 +181,21 @@ public class CurrencyInfo extends AppCompatActivity implements CurrencyDialog.Cu
     }
     private void jsonParse(String cryptoCurrency) {
         String url = ("https://api.coingecko.com/api/v3/coins/"+ cryptoCurrency +"?localization=false&community_data=false&market_data=true&developer_data=false&sparkline=true&tickers=false");
+        final List<View> viewsList = new ArrayList<>();
+
+        //Add views to a list to make them visible when the loading is done
+        viewsList.add(currencyDescription);
+        viewsList.add(currencyImgView);
+        viewsList.add(currencyMcap);
+        viewsList.add(currencyRank);
+        viewsList.add(currencyPrice);
+        viewsList.add(currencyCircSupply);
+        viewsList.add(currencyHighLow);
+        viewsList.add(currencyTotalVolume);
+        viewsList.add(currencyPriceChangeDollar);
+        viewsList.add(currencyAth);
+        viewsList.add(currencyAmount);
+        viewsList.add(divider);
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -198,6 +214,8 @@ public class CurrencyInfo extends AppCompatActivity implements CurrencyDialog.Cu
                             Picasso.get().load(currencyImg).into(currencyImgView);
 
                             progressBar.setVisibility(View.GONE);
+                            changeVisibility(viewsList, View.VISIBLE);
+
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -211,6 +229,11 @@ public class CurrencyInfo extends AppCompatActivity implements CurrencyDialog.Cu
             }
         });
         queue.add(request);
+    }
+    private void changeVisibility(List<View> views, int visibility) {
+        for (View view : views) {
+            view.setVisibility(visibility);
+        }
     }
     public void openDialog() {
         CurrencyDialog dialog = new CurrencyDialog();
@@ -226,4 +249,5 @@ public class CurrencyInfo extends AppCompatActivity implements CurrencyDialog.Cu
         setResult(ADD_CRYPTO, intent);
         finish();
     }
+
 }

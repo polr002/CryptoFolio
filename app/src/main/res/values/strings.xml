@@ -3,7 +3,7 @@
     <string name="mcap"><b>Market Cap: </b></string>
     <string name="circ_supply">Circulating supply: </string>
     <!-- Strings for currency info view-->
-    <string name="currencySupplyStr">Circulating Supply:  \n%1$s \nTotal Supply: \n%2$s </string>
+    <string name="currencySupplyStr">Circulating Supply:  \n%1$s \n\nTotal Supply: \n%2$s </string>
     <string name="currencyRankStr">Rank: %1$d </string>
     <string name="currencyPriceChangeStr">Price Change: \n$ %1$s | %2$s %% </string>
     <string name="currencyPriceStr">$ %1$s </string>
